@@ -1,35 +1,61 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+import daniel from "/images/image-daniel.jpg";
+import jeanette from "/images/image-jeanette.jpg";
+import jonathan from "/images/image-jonathan.jpg";
+import kira from "/images/image-kira.jpg";
+import patrick from "/images/image-patrick.jpg";
 
-function App() {
-  const [count, setCount] = useState(0)
+const pp = [daniel, jonathan, jeanette, patrick, kira];
 
-  return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
-  )
+async function Fetcher(url, setter) {
+	const fetchingData = await fetch(url);
+	const data = await fetchingData.json();
+	setter(data);
 }
 
-export default App
+function App() {
+	const [data, setData] = useState([]);
+	useEffect(() => {
+		Fetcher("/testimonials.json", setData);
+	}, []);
+	return (
+		<div className='App bg-tw-Light-grayish-blue xl:min-h-screen py-16'>
+			<div className='w-full text-center pb-8'>
+				Coded with <span role='img'>❤</span> by{" "}
+				<a
+					href='https://linktr.ee/joehsn'
+					className='text-blue-400 hover:text-blue-600'
+				>
+					@joehsn
+				</a>
+				.
+			</div>
+			<div className='container p-4 mx-auto'>
+				<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 md:grid-rows-2 gap-6'>
+					{data.map((testimonial, idx) => (
+						<div
+							className='testimonial shadow-xl p-6 rounded-lg flex flex-col gap-y-4'
+							key={idx}
+						>
+							<div className='flex items-center gap-x-4'>
+								<img
+									src={pp[idx]}
+									alt={testimonial.name}
+									className='rounded-full border w-12 border-tw-Light-gray'
+								/>
+								<div className='flex-1'>
+									<div className='font-semibold'>{testimonial.name}</div>
+									<div className='opacity-50'>{testimonial.verify}</div>
+								</div>
+							</div>
+							<div className='font-semibold text-2xl'>{testimonial.brief}</div>
+							<div className='opacity-50'>"{testimonial.message}"</div>
+						</div>
+					))}
+				</div>
+			</div>
+		</div>
+	);
+}
+
+export default App;
